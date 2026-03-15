@@ -16,8 +16,9 @@ const routes = [
     meta: { title: '建立就诊档案' }
   },
   {
+    // 嵌套路由，这里可以利用组件进行嵌套，而不必再使用路径嵌套。
     path: '/',
-    component: () => import('@/layout/index.vue'),
+    component: () => import('@/index.vue'),
     redirect: '/home', // 默认进入首页
     children: [
       {

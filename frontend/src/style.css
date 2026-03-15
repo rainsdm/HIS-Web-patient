@@ -1,1 +1,65 @@
 @import "tailwindcss";
+
+:root {
+    --primary: #8C6339;
+    --bg-color: #F8F5F0;
+    --surface: #FFFFFF;
+    --text-main: #2E2A28;
+    --text-sub: #756C65;
+    --border: #E6E1DC;
+    --success: #C49B4F;
+    --danger: #A34332;
+}
+
+@theme {
+    /* 默认字体 */
+    --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-medical: var(--font-sans);
+}
+
+@layer base {
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply bg-(--bg-color) text-(--text-main) leading-[1.6] font-sans;
+        /* 适配刘海屏和底部手势条 */
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    a {
+        @apply text-(--primary) no-underline cursor-pointer; /* */
+    }
+
+    /* 统一增大移动端点击目标区域，防误触 */
+    button, input, select { min-height: 44px; } /* */
+}
+
+@layer components {
+    .card {
+        @apply bg-(--surface) border border-solid border-(--border) rounded-lg p-6 mb-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)];
+    }
+    .card-title {
+        @apply text-[18px] font-bold mb-4 text-(--primary) border-b border-solid border-(--border) pb-2;
+    }
+
+    .form-input {
+        @apply w-full p-2.5 border border-solid border-(--border) rounded bg-(--bg-color) text-(--text-main) outline-none;
+    }
+    .form-label {
+        @apply block mb-2 text-(--text-sub);
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center cursor-pointer border-none rounded px-4 py-2 text-sm bg-(--primary) text-(--surface) transition-opacity duration-200 hover:opacity-80;
+    }
+}
