@@ -6,12 +6,8 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/home/index.vue'),
-    meta: { title: '身份核验' },
-    beforeEnter: (to, from, next) => {
-            alert(`【${to.meta.title}】模块正在快马加鞭开发中，敬请期待！`);
-            next(false); // 传入 false 会中断当前的路由跳转，停留在原页面
-    }
+    component: () => import('@/views/Login.vue'),
+    meta: { title: '身份核验' }
   },
   {
     path: '/register',
