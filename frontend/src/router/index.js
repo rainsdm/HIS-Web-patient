@@ -4,22 +4,6 @@ const whiteList = ['/login', '/register', '/home']
 
 const routes = [
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('@/views/Login.vue'),
-    meta: { title: '身份核验' }
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: () => import('@/views/home/index.vue'),
-    meta: { title: '建立就诊档案' },
-    beforeEnter: (to, from, next) => {
-            alert(`【${to.meta.title}】模块正在快马加鞭开发中，敬请期待！`);
-            next(false); // 传入 false 会中断当前的路由跳转，停留在原页面
-    }
-  },
-  {
     // 嵌套路由，这里可以利用组件进行嵌套，而不必再使用路径嵌套。
     path: '/',
     component: () => import('@/views/home/index.vue'),
@@ -30,6 +14,18 @@ const routes = [
         name: 'Home',
         component: () => import('@/views/home/MainPage.vue'),
         meta: { title: '医院首页' } // 医院首页与默认首页相同，且不需要认证
+      },
+      {
+        path: 'register',
+        name: 'Register',
+        component: () => import('@/views/Register.vue'),
+        meta: { title: '建立就诊档案' }
+      },
+      {
+        path: 'login',
+        name: 'Login',
+        component: () => import('@/views/Login.vue'),
+        meta: { title: '身份核验' }
       },
       {
         path: 'appointment',
