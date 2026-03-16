@@ -36,12 +36,8 @@ const routes = [
       {
         path: 'profile',
         name: 'Profile',
-        component: () => import('@/views/home/index.vue'),
-        meta: { title: '电子档案', requiresAuth: true },
-        beforeEnter: (to, from, next) => {
-            alert(`【${to.meta.title}】模块正在快马加鞭开发中，敬请期待！`);
-            next(false); // 传入 false 会中断当前的路由跳转，停留在原页面
-        }
+        component: () => import('@/views/Profile.vue'),
+        meta: { title: '电子档案', requiresAuth: true }
       }
     ]
   }
