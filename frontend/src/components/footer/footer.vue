@@ -8,10 +8,7 @@
 <style scoped>
     @reference "@/style.css";
     .footer {
-        text-align: center;
-        padding: 20px;
-        color: var(--text-sub);
-        font-size: 12px;
-        margin-top: 40px;
+        @apply text-center p-[20px] text-[var(--text-sub)];
+        @apply text-[12px] mt-[40px];
     }
 </style>
