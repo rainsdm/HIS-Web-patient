@@ -6,13 +6,13 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/login/index.vue'),
+    component: () => import('@/views/home/index.vue'),
     meta: { title: '身份核验' }
   },
   {
     path: '/register',
     name: 'Register',
-    component: () => import('@/views/register/index.vue'),
+    component: () => import('@/views/home/index.vue'),
     meta: { title: '建立就诊档案' }
   },
   {
@@ -25,18 +25,18 @@ const routes = [
         path: 'home',
         name: 'Home',
         component: () => import('@/views/home/index.vue'),
-        meta: { title: '医院首页' }
+        meta: { title: '医院首页' } // 医院首页与默认首页相同，且不需要认证
       },
       {
         path: 'appointment',
         name: 'Appointment',
-        component: () => import('@/views/appointment/index.vue'),
+        component: () => import('@/views/home/index.vue'),
         meta: { title: '门诊挂号', requiresAuth: true }
       },
       {
         path: 'profile',
         name: 'Profile',
-        component: () => import('@/views/profile/index.vue'),
+        component: () => import('@/views/home/index.vue'),
         meta: { title: '电子档案', requiresAuth: true }
       }
     ]

@@ -7,11 +7,11 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
   plugins: [
     vue(), 
-    tailwindcss
+    tailwindcss()
   ],
-  resolve: [
+  resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)) // 将 @ 指向 src 目录
     }
-  ]
+  }
 })
