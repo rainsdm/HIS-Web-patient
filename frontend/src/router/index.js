@@ -13,7 +13,7 @@ const routes = [
         path: 'home',
         name: 'Home',
         component: () => import('@/views/home/MainPage.vue'),
-        meta: { title: '医院首页' } // 医院首页与默认首页相同，且不需要认证
+        meta: { title: '医院首页' }
       },
       {
         path: 'register',
@@ -30,11 +30,8 @@ const routes = [
       {
         path: 'appointment',
         name: 'Appointment',
-        component: () => import('@/views/home/index.vue'),
-        meta: { title: '门诊挂号', requiresAuth: true },beforeEnter: (to, from, next) => {
-            alert(`【${to.meta.title}】模块正在快马加鞭开发中，敬请期待！`);
-            next(false); // 传入 false 会中断当前的路由跳转，停留在原页面
-        }
+        component: () => import('@/views/Appointment.vue'),
+        meta: { title: '门诊挂号', requiresAuth: true }
       },
       {
         path: 'profile',
