@@ -1,129 +1,51 @@
 <template>
-    <div class="profile-wrapper">
-        <div class="breadcrumb">当前位置：首页 > 个人中心</div>
+  <div class="profile-wrapper">
+    <div class="breadcrumb">当前位置：首页 > 个人中心</div>
 
-        <div class="card profile-info-section">
-            <div class="card-title">个人档案</div>
-            <div class="info-content">
-                <div class="info-item">
-                    <span class="label">姓名：</span>
-                    <span class="value font-bold">王五</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">证件号码：</span>
-                    <span class="value">110***********1234</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">联系电话：</span>
-                    <span class="value">138****5678</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">医疗保障：</span>
-                    <span class="value text-success">✔ 已绑定本市职工医保</span>
-                </div>
-            </div>
+    <Card title="个人档案">
+      <div class="space-y-3">
+        <div class="flex border-b border-dashed border-(--border) pb-2">
+          <span class="w-24 text-(--text-sub)">姓名：</span>
+          <span class="font-bold">王五</span>
         </div>
+        <div class="flex border-b border-dashed border-(--border) pb-2">
+          <span class="w-24 text-(--text-sub)">证件号码：</span>
+          <span>110***********1234</span>
+        </div>
+        <div class="flex">
+          <span class="w-24 text-(--text-sub)">医疗保障：</span>
+          <span class="text-(--success)">✔ 职工医保已关联</span>
+        </div>
+      </div>
+    </Card>
 
-        <div class="card record-section">
-            <div class="card-title">我的挂号记录</div>
-            
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>就诊日期</th>
-                            <th>科室与医师</th>
-                            <th>就诊序号</th>
-                            <th>状态</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>2026-03-10</td>
-                            <td>内科 - 张三</td>
-                            <td>A015</td>
-                            <td><span class="status-text success-text">已就诊</span></td>
-                        </tr>
-                        <tr>
-                            <td>2026-03-16</td>
-                            <td>内科 - 张三</td>
-                            <td>待分配</td>
-                            <td><span class="status-text primary-text">已预约，待报到</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    <Card title="我的挂号记录">
+      <Table :columns="recordCols">
+        <tr v-for="record in records" :key="record.id">
+          <td>{{ record.date }}</td>
+          <td>{{ record.dept }}</td>
+          <td>{{ record.no }}</td>
+          <td>
+            <span :class="record.status === '已就诊' ? 'text-(--success)' : 'text-(--primary)'">
+              {{ record.status }}
+            </span>
+          </td>
+        </tr>
+      </Table>
+    </Card>
+  </div>
 </template>
 
 <script setup>
-/**
- * 个人中心组件
- * 主要负责展示用户档案及历史挂号记录
- */
+import Card from '@/components/base/Card.vue'
+import Table from '@/components/base/Table.vue'
+
+const recordCols = [
+  { label: '就诊日期' }, { label: '科室与医师' }, { label: '序号' }, { label: '状态' }
+]
+
+const records = [
+  { id: 101, date: '2026-03-10', dept: '内科 - 张三', no: 'A015', status: '已就诊' },
+  { id: 102, date: '2026-03-16', dept: '内科 - 张三', no: '待分配', status: '预约成功' }
+]
 </script>
-
-<style scoped>
-@reference "@/style.css";
-
-/* === 容器与通用布局 === */
-.profile-wrapper {
-    @apply w-full;
-}
-
-.breadcrumb {
-    @apply mb-4 text-[14px] text-(--text-sub);
-}
-
-/* === 个人信息区域 === */
-.info-content {
-    @apply space-y-3;
-}
-
-.info-item {
-    @apply flex items-center text-[15px];
-}
-
-.info-item .label {
-    @apply w-[100px] text-(--text-sub) shrink-0;
-}
-
-.info-item .value {
-    @apply text-(--text-main);
-}
-
-/* === 挂号记录表格区域 === */
-.table-container {
-    @apply w-full overflow-x-auto;
-}
-
-.data-table {
-    @apply w-full border-collapse mt-2 min-w-[600px];
-}
-
-.data-table th, .data-table td {
-    @apply border border-solid border-(--border) p-3 text-left text-[14px];
-}
-
-.data-table th {
-    @apply bg-(--bg-color) text-(--text-sub) font-normal;
-}
-
-/* === 状态修饰类 === */
-.status-text {
-    @apply font-bold;
-}
-
-.success-text {
-    @apply text-(--success);
-}
-
-.primary-text {
-    @apply text-(--primary);
-}
-
-.text-success {
-    @apply text-(--success);
-}
-</style>
