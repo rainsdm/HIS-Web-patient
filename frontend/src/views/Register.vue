@@ -7,14 +7,14 @@
       
       <div class="form-content w-full">
         <Card title="填写基本信息">
-          <div class="form-row flex gap-4 mb-4">
+          <div class="form-row flex flex-col md:flex-row gap-0 md:gap-4 mb-4">
             <Input 
               v-model="form.name" 
               label="患者姓名" 
               placeholder="请输入真实姓名" 
-              class="flex-1 mb-0" 
+              class="flex-1 mb-4 md:mb-0" 
             />
-            <div class="field-wrapper flex-1">
+            <div class="field-wrapper flex-1 mb-4 md:mb-0">
               <label class="block text-[14px] mb-1 text-(--text-sub)">性别</label>
               <div class="flex gap-4 items-center h-[44px]">
                 <label class="inline-flex items-center cursor-pointer text-(--text-main)">
@@ -27,22 +27,22 @@
             </div>
           </div>
 
-          <div class="form-row flex gap-4 mb-4">
+          <div class="form-row flex flex-col md:flex-row gap-0 md:gap-4 mb-4">
             <Input 
               v-model="form.idCard" 
               label="身份证号" 
               placeholder="请输入18位身份证号码" 
-              class="flex-1 mb-0" 
+              class="flex-1 mb-4 md:mb-0" 
             />
             <Input 
               v-model="form.birthDate" 
               type="date" 
               label="出生日期" 
-              class="flex-1 mb-0" 
+              class="flex-1 mb-4 md:mb-0" 
             />
           </div>
 
-          <div class="field-wrapper mb-4 mt-4">
+          <div class="field-wrapper mb-4 md:mt-4 mt-0">
             <label class="block text-[14px] mb-1 text-(--text-sub)">医疗保障类型</label>
             <div class="flex gap-4 items-center h-[44px]">
               <label class="inline-flex items-center cursor-pointer text-(--text-main)">

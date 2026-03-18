@@ -10,14 +10,11 @@
 <style scoped>
 @reference "@/style.css";
 .nav-links {
-    /* 使用 flex 保证桌面端横向排列，gap-6 提供 24px 的项间距 */
-    @apply flex items-center gap-6;
+    @apply flex flex-wrap justify-center items-center gap-[10px] md:gap-6 mt-[10px] pb-[10px] md:mt-0 md:pb-0;
 }
 
 .nav-item {
-    /* 1. 显式设为深咖色，覆盖全局 a 标签的 primary 颜色 */
-    /* 2. 增加 py-1 和 relative，为底部的激活状态横线预留空间 */
-    @apply text-(--text-main) font-bold transition-colors duration-200 relative py-1;
+    @apply text-(--text-main) font-bold transition-colors duration-200 relative py-1 text-[14px] md:text-[16px];
 }
 
 /* 鼠标悬停状态 */

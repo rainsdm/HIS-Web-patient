@@ -27,11 +27,16 @@ defineProps({
 @reference "@/style.css";
 
 .sidebar { 
-    @apply w-full flex justify-between px-[50px] pt-[30px] pb-[20px] bg-(--surface) border border-solid border-(--border) rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.02)] pointer-events-none box-border;
+    @apply w-full flex justify-between pointer-events-none box-border;
+    /* 移动端样式 */
+    @apply px-[10px] pt-[20px] pb-[12px] bg-transparent border-none shadow-none;
+    /* 电脑端样式 */
+    @apply md:px-[50px] md:pt-[30px] md:pb-[20px] md:bg-(--surface) md:border md:border-solid md:border-(--border) md:rounded-lg md:shadow-[0_2px_8px_rgba(0,0,0,0.02)];
 }
 
 .timeline-item { 
-    @apply relative flex-1 text-center pt-[24px] text-(--text-sub) text-[14px] whitespace-nowrap;
+    @apply relative flex-1 text-center text-(--text-sub) whitespace-nowrap;
+    @apply pt-[20px] text-[12px] md:pt-[24px] md:text-[14px];
 }
 
 .timeline-item::before { 

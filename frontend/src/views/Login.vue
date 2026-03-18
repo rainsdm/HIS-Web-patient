@@ -32,7 +32,7 @@
         <div class="text-center mt-6 pt-4 border-t border-dashed border-(--border)">
           <span 
             class="text-[14px] text-(--text-sub) cursor-pointer hover:text-(--primary) transition-colors" 
-            @click="$router.push('/main')"
+            @click="$router.push('/home')"
           >
             ← 回到首页工作台
           </span>
