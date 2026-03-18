@@ -1,17 +1,15 @@
 <template>
-  <div class="step-sidebar">
+  <div class="sidebar">
     <div 
       v-for="(step, index) in steps" 
       :key="index"
-      class="step-item"
+      class="timeline-item"
       :class="{
-        'step-active': currentStep === index,
-        'step-done': currentStep > index,
-        'step-last': index === steps.length - 1
+        'active': currentStep === index
       }"
     >
       {{ step.title }}<br>
-      <span class="step-desc">
+      <span>
         ({{ currentStep === index ? '当前环节' : (currentStep > index ? '已完成' : '待办理') }})
       </span>
     </div>
@@ -27,18 +25,39 @@ defineProps({
 
 <style scoped>
 @reference "@/style.css";
-.step-sidebar { @apply w-[220px] shrink-0; }
-.step-item {
-  @apply pl-5 border-l-2 border-solid border-(--border) mb-6 relative text-(--text-sub) text-[14px] leading-relaxed;
+
+.sidebar { 
+    @apply w-full flex justify-between px-[50px] pt-[30px] pb-[20px] bg-(--surface) border border-solid border-(--border) rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.02)] pointer-events-none box-border;
 }
-.step-item::before {
-  content: '';
-  @apply absolute left-[-6px] top-0 w-[10px] h-[10px] rounded-full bg-(--border);
+
+.timeline-item { 
+    @apply relative flex-1 text-center pt-[24px] text-(--text-sub) text-[14px] whitespace-nowrap;
 }
-.step-active { @apply border-l-(--primary) text-(--primary) font-bold; }
-.step-active::before { @apply bg-(--primary); }
-.step-done { @apply border-l-(--success) text-(--text-sub); }
-.step-done::before { @apply bg-(--success); }
-.step-last { @apply border-l-0; }
-.step-desc { @apply text-[12px] font-normal opacity-80; }
+
+.timeline-item::before { 
+    content: ''; 
+    @apply absolute left-1/2 top-0 -translate-x-1/2 w-[10px] h-[10px] rounded-full bg-(--border) z-[2];
+}
+
+.timeline-item::after {
+    content: '';
+    @apply absolute top-[4px] left-1/2 w-full h-[2px] bg-(--border) z-[1];
+}
+
+.timeline-item:last-child::after { 
+    display: none; 
+}
+
+/* 隐藏括号内的状态副标题 */
+.timeline-item span { 
+    display: none; 
+}
+
+.timeline-item.active { 
+    @apply text-(--primary) font-bold; 
+}
+
+.timeline-item.active::before { 
+    @apply bg-(--primary); 
+}
 </style>

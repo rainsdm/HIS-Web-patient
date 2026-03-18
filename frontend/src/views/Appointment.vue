@@ -1,15 +1,16 @@
 <template>
   <div class="appointment-wrapper">
-    <div class="breadcrumb">当前位置：首页 > 门诊服务 > 预约挂号</div>
+    <div class="breadcrumb mb-4 text-[14px] text-(--text-sub)">当前位置：首页 > 门诊服务 > 预约挂号</div>
 
-    <div class="appointment-layout flex gap-5">
+    <div class="appointment-layout flex flex-col gap-5">
       <StepSidebar :steps="pageSteps" :currentStep="1" />
 
-      <div class="content flex-grow">
+      <div class="content w-full">
         <Card title="就诊档案信息" noTitleBorder class="bg-(--bg-color)">
           <div class="text-[14px]">
             就诊人：<strong class="text-(--text-main)">王五</strong> 
             <span class="ml-4 text-(--text-sub)">证件号：110***********1234</span>
+            <div class="text-(--success) mt-1">✔ 已绑定本市职工医保</div>
           </div>
         </Card>
 
@@ -57,3 +58,7 @@ const handleReserve = (item) => {
   console.log('预约项目：', item)
 }
 </script>
+
+<style scoped>
+@reference "@/style.css";
+</style>

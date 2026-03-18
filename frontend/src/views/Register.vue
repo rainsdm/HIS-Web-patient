@@ -2,12 +2,12 @@
   <div class="register-wrapper">
     <div class="breadcrumb mb-4 text-[14px] text-(--text-sub)">当前位置：首页 > 门诊服务 > 患者建档</div>
     
-    <div class="register-layout flex flex-col md:flex-row gap-5">
+    <div class="register-layout flex flex-col gap-5">
       <StepSidebar :steps="steps" :currentStep="0" />
       
-      <div class="form-content flex-grow">
+      <div class="form-content w-full">
         <Card title="填写基本信息">
-          <div class="form-row flex flex-col md:flex-row gap-4 mb-4">
+          <div class="form-row flex gap-4 mb-4">
             <Input 
               v-model="form.name" 
               label="患者姓名" 
@@ -27,7 +27,7 @@
             </div>
           </div>
 
-          <div class="form-row flex flex-col md:flex-row gap-4 mb-4">
+          <div class="form-row flex gap-4 mb-4">
             <Input 
               v-model="form.idCard" 
               label="身份证号" 
@@ -70,7 +70,7 @@
       </div>
     </div>
 
-    <div v-if="showModal" class="modal-overlay fixed inset-0 bg-[rgba(46,42,40,0.6)] flex items-center justify-center z-50 p-5">
+    <div v-if="showModal" class="modal-overlay fixed inset-0 bg-[rgba(46,42,40,0.6)] flex items-center justify-center z-[1000] p-5">
       <Card title="完善安全信息" noTitleBorder class="w-full max-w-[450px] mb-0 max-h-[90vh] overflow-y-auto shadow-[0_10px_30px_rgba(0,0,0,0.1)]">
         <p class="text-[14px] text-(--text-sub) mb-5">为了确保您的就诊隐私与电子报告安全，请绑定个人邮箱并设定独立密码。</p>
         
@@ -150,7 +150,6 @@ const handleOpenModal = () => {
   errors.password = false
 }
 
-// 严格遵循原型的正则校验逻辑
 const handleBind = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,16}$/
