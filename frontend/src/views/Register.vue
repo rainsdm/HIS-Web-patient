@@ -49,15 +49,28 @@
                 <input type="radio" value="self" v-model="form.insurance" class="mr-2"> 彻底自费
               </label>
               <label class="inline-flex items-center cursor-pointer text-(--text-main)">
-                <input type="radio" value="medicare" v-model="form.insurance" class="mr-2"> 医保卡/社保卡
+                <input type="radio" value="bmiCard" v-model="form.insurance" class="mr-2"> 医保卡
               </label>
+
+              <label class="inline-flex items-center cursor-pointer text-(--text-main)">
+                <input type="radio" value="siCard" v-model="form.insurance" class="mr-2"> 社保卡
+              </label>
+              
             </div>
           </div>
 
           <Input 
-            v-if="form.insurance === 'medicare'" 
-            v-model="form.medicareCard" 
-            label="医保卡号/社保卡号" 
+            v-if="form.insurance === 'bmiCard'" 
+            v-model="form.cardNumber" 
+            label="医保卡号" 
+            placeholder="请输入卡号以便门诊统筹结算" 
+            class="mb-4" 
+          />
+
+          <Input 
+            v-else-if="form.insurance === 'siCard'" 
+            v-model="form.cardNumber" 
+            label="社保卡号" 
             placeholder="请输入卡号以便门诊统筹结算" 
             class="mb-4" 
           />
@@ -101,7 +114,7 @@
           <div v-show="errors.password" class="text-(--danger) text-[12px] mt-1">密码不符合复杂度要求，请检查全部包含项</div>
         </div>
 
-        <Button class="w-full mt-2" @click="handleBind">确认绑定并开启就医</Button>
+        <Button class="w-full mt-2" @click="register">确认绑定并开启就医</Button>
       </Card>
     </div>
   </div>
@@ -133,7 +146,7 @@ const form = reactive({
   idCard: '',
   birthDate: '',
   insurance: 'self',
-  medicareCard: '',
+  cardNumber: '',
   email: '',
   password: ''
 })
@@ -150,7 +163,7 @@ const handleOpenModal = () => {
   errors.password = false
 }
 
-const handleBind = () => {
+const register = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const pwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,16}$/
 
