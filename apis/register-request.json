@@ -1,0 +1,10 @@
+{
+  "name": "张三",
+  "gender": "男",
+  "identityCard": "14050120000101001X",
+  "birthday": "20000101",
+  "email": "zhangsan@example.com",
+  "password": "Password123!",
+  "bmiCard": "BMI88889999",
+  "siCard": "SI66667777"
+}

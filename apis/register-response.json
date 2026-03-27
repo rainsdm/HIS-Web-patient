@@ -1,0 +1,10 @@
+{
+  "code": 200,
+  "message": "注册成功，已自动登录",
+  "data": {
+    "uid": "uid(暂时没有设计uid计算规则)",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJ1aWQo5pqC5pe25rKh5pyJ6K6-6K6hdWlk6K6h566X6KeE5YiZKSIsImlhdCI6MTc3NDQzOTI5MSwiZXhwIjoxNzc0NDQxMDkxfQ.dcvqLytqdy6uD-wNqaGD4A3VDUdzD_oKZUo7IZoTw3Q",
+    "expiresAt": "2026-03-25T20:18:11Z",
+    "patientName": "张三"
+  }
+}
