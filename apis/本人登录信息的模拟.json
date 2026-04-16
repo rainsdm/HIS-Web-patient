@@ -1,0 +1,10 @@
+{
+  "code": 200,
+  "message": "注册成功，已自动登录",
+  "data": {
+    "uid": "PAARWTUTOI022059",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzUsImlhdCI6MTc3NTM5ODg2MywiZXhwIjoxNzc1NDAwNjYzfQ.mjP3eWY-mEuYi2EoQqVH9gDmhYxKpWl7sTR3eQYN1nk",
+    "expiresAt": "2026-04-05 22:51:03 ",
+    "patientName": "刘杨思源"
+  }
+}

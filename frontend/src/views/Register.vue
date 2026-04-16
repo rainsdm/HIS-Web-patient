@@ -13,53 +13,13 @@
                 <label class="block text-[14px] mb-1 text-(--text-sub)">患者姓名</label>
                 <input v-model="form.name" type="text" placeholder="请输入真实姓名" class="form-input w-full" required />
               </div>
-              <div class="field-wrapper flex-1 mb-4 md:mb-0">
-                <label class="block text-[14px] mb-1 text-(--text-sub)">性别</label>
-                <div class="flex gap-4 items-center h-[44px]">
-                  <label class="inline-flex items-center cursor-pointer text-(--text-main)">
-                    <input type="radio" value="male" v-model="form.gender" class="mr-2" required> 男
-                  </label>
-                  <label class="inline-flex items-center cursor-pointer text-(--text-main)">
-                    <input type="radio" value="female" v-model="form.gender" class="mr-2" required> 女
-                  </label>
-                </div>
-              </div>
             </div>
 
             <div class="form-row flex flex-col md:flex-row gap-0 md:gap-4 mb-4">
               <div class="field-wrapper flex-1 mb-4 md:mb-0">
                 <label class="block text-[14px] mb-1 text-(--text-sub)">身份证号</label>
-                <input v-model="form.idCard" type="text" placeholder="请输入18位身份证号码" class="form-input w-full" required pattern="^\d{17}[\dXx]$" title="请输入有效的18位身份证号码" />
+                <input v-model="form.identityCard" type="text" placeholder="请输入18位身份证号码" class="form-input w-full" required pattern="^\d{17}[\dXx]$" title="请输入有效的18位身份证号码" />
               </div>
-              <div class="field-wrapper flex-1 mb-4 md:mb-0">
-                <label class="block text-[14px] mb-1 text-(--text-sub)">出生日期</label>
-                <input v-model="form.birthDate" type="date" class="form-input w-full" required />
-              </div>
-            </div>
-
-            <div class="field-wrapper mb-4 md:mt-4 mt-0">
-              <label class="block text-[14px] mb-1 text-(--text-sub)">医疗保障类型</label>
-              <div class="flex gap-4 items-center h-[44px]">
-                <label class="inline-flex items-center cursor-pointer text-(--text-main)">
-                  <input type="radio" value="self" v-model="form.insurance" class="mr-2" required> 彻底自费
-                </label>
-                <label class="inline-flex items-center cursor-pointer text-(--text-main)">
-                  <input type="radio" value="bmiCard" v-model="form.insurance" class="mr-2" required> 医保卡
-                </label>
-                <label class="inline-flex items-center cursor-pointer text-(--text-main)">
-                  <input type="radio" value="siCard" v-model="form.insurance" class="mr-2" required> 社保卡
-                </label>
-              </div>
-            </div>
-
-            <div v-if="form.insurance === 'bmiCard'" class="field-wrapper mb-4">
-              <label class="block text-[14px] mb-1 text-(--text-sub)">医保卡号</label>
-              <input v-model="form.cardNumber" type="text" placeholder="请输入卡号以便门诊统筹结算" class="form-input w-full" required />
-            </div>
-
-            <div v-else-if="form.insurance === 'siCard'" class="field-wrapper mb-4">
-              <label class="block text-[14px] mb-1 text-(--text-sub)">社保卡号</label>
-              <input v-model="form.cardNumber" type="text" placeholder="请输入卡号以便门诊统筹结算" class="form-input w-full" required />
             </div>
 
             <div class="action-footer mt-7 pt-5 border-t border-solid border-(--border) text-right">
@@ -115,6 +75,9 @@ import Button from '@/components/base/Button.vue'
 const router = useRouter()
 const showModal = ref(false)
 
+// 1. 定义常量，对应后端 ResultCode.SUCCESS 的值
+const SUCCESS_CODE = 200
+
 const steps = [
   { title: '患者建档' },
   { title: '门诊排班预约' },
@@ -124,11 +87,7 @@ const steps = [
 
 const form = reactive({
   name: '',
-  gender: 'male',
-  idCard: '',
-  birthDate: '',
-  insurance: 'self',
-  cardNumber: '',
+  identityCard: '',
   email: '',
   password: ''
 })
@@ -137,46 +96,54 @@ const handleOpenModal = () => {
   showModal.value = true
 }
 
-// 异步提交表单数据并处理响应
+/**
+ * 异步提交表单数据并处理响应
+ * 仅负责数据交互与抛出异常，不处理 UI 交互(alert)
+ */
 async function submitForm() {
-  try {
-    const response = await fetch('/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    })
+  const response = await fetch('http://localhost:8080/auth/patient/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(form)
+  })
 
-    if (!response.ok) {
-      throw new Error(`HTTP 错误！状态：${response.status}`);
-    }
+  // 2. 去除过度设计，直接解析 JSON
+  // 如果后端因为严重错误返回了 HTML 页面，这里会自动抛出解析异常，并被 register 函数的 catch 捕获
+  const result = await response.json()
 
-    const result = await response.json()
-
-    // 修复变量声明，避免全局覆盖
-    const storage = window.localStorage
-    storage.setItem('token', result.data.token)
-    storage.setItem('uid', result.data.uid)
-    storage.setItem('name', result.data.patientName)
-    storage.setItem('idCard', result.data.expiresAt)
-    
-    return true // 成功标识
-  } catch (error) {
-    console.error('注册失败:', error)
-    return false // 失败标识
+  // 校验 HTTP 层状态 (处理 404, 502 等网络级错误)
+  if (!response.ok) {
+    throw new Error(`网络通讯失败，状态码：${response.status}`)
   }
+
+  // 3. 校验业务层状态码
+  if (result.code !== SUCCESS_CODE) {
+    // 抛出后端的自定义错误提示 (例如 "参数检验失败" 或 "注册失败")
+    throw new Error(result.message || '业务处理未成功')
+  }
+
+  // 业务成功，执行本地存储赋值
+  const storage = window.localStorage
+  storage.setItem('token', result.data.token)
+  storage.setItem('uid', result.data.uid)
+  storage.setItem('name', result.data.patientName)
 }
 
 // 绑定模态框的提交事件
 const register = async () => {
-  // 等待提交结果
-  const isSuccess = await submitForm()
-  
-  if (isSuccess) {
+  try {
+    // 等待提交结果，如果报错会直接跳入 catch 块
+    await submitForm()
+    
+    // 成功分支
     alert('账号安全信息绑定成功！将为您跳转至挂号页面。')
     showModal.value = false
     router.push('/appointment')
-  } else {
-    alert('提交失败，请检查网络或稍后重试。')
+    
+  } catch (error) {
+    // 4. 失败分支统一集中在这里处理，避免重复弹窗
+    console.error('注册环节发生错误:', error)
+    alert('未能完成档案建立: ' + error.message)
   }
 }
 </script>

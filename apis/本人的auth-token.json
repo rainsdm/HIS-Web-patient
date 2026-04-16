@@ -1,0 +1,13 @@
+{
+    "Header": {
+        "alg": "HS256",
+        "typ": "JWT"
+    },
+    "Payload": {
+        "id": 35,
+        "iat": 1775398863,
+        "exp": 1775400663
+    },
+    "Secret" : "RR2RLc2hgII7j4GUDBrizt9XbPlltFKW",
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzUsImlhdCI6MTc3NTM5ODg2MywiZXhwIjoxNzc1NDAwNjYzfQ.mjP3eWY-mEuYi2EoQqVH9gDmhYxKpWl7sTR3eQYN1nk"
+}
