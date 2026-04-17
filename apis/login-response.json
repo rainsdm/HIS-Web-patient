@@ -1,0 +1,10 @@
+{
+  "code": 200,
+  "message": "登录成功",
+  "data": {
+    "uid": "P3LFTVVFYBC178034",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJ1aWQo5pqC5pe25rKh5pyJ6K6-6K6hdWlk6K6h566X6KeE5YiZKSIsImlhdCI6MTc3NDQzOTI5MSwiZXhwIjoxNzc0NDQxMDkxfQ.dcvqLytqdy6uD-wNqaGD4A3VDUdzD_oKZUo7IZoTw3Q",
+    "expiresAt": "2026-03-25T20:18:11Z",
+    "patientName": "张三"
+  }
+}
