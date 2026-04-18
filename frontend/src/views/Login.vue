@@ -1,93 +1,51 @@
+<!-- 文件路径: src/views/Login.vue -->
 <template>
-  <div class="login-container flex justify-center items-center py-20">
-    <Card title="患者服务平台登录" class="w-[400px]">
-      <div class="space-y-4">
-        <Input 
-          v-model="loginForm.email" 
-          label="邮箱" 
-          placeholder="请输入您的邮箱"
-          type="email" 
-          name="email"
-        />
-        
-        <Input 
-          v-model="loginForm.password" 
-          type="password" 
-          label="登录密码" 
-          placeholder="请输入密码"
-          name="password"
-        />
-        
-        <Button class="w-full py-2.5 mt-2" @click="handleLogin">
-          立即登录
-        </Button>
-        
-        <div class="flex justify-between text-[13px] text-(--primary) mt-2 px-1">
-          <span class="cursor-pointer hover:underline transition-all">忘记密码？</span>
-          <span 
-            class="cursor-pointer hover:underline transition-all font-bold" 
-            @click="$router.push('/register')"
-          >
-            立即注册建档
-          </span>
-        </div>
-
-        <div class="text-center mt-6 pt-4 border-t border-dashed border-(--border)">
-          <span 
-            class="text-[14px] text-(--text-sub) cursor-pointer hover:text-(--primary) transition-colors" 
-            @click="$router.push('/home')"
-          >
-            ← 回到首页工作台
-          </span>
-        </div>
+  <div class="login-wrapper flex justify-center items-center py-10">
+    <Card title="登录/注册" class="w-full max-w-sm">
+      <form @submit.prevent="handleLogin" class="space-y-4">
+        <Input label="邮箱" type="email" placeholder="请输入您的邮箱" v-model="loginForm.email" />
+        <Input label="密码" type="password" placeholder="请输入您的密码" v-model="loginForm.password" />
+        <Button type="submit" class="w-full">登 录</Button>
+      </form>
+      <div class="mt-4 text-center text-sm text-(--text-sub)">
+        还没有账号？
+        <RouterLink to="/register" class="text-(--primary) hover:underline">立即建立档案</RouterLink>
       </div>
     </Card>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user' // 引入 user store
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+import { useToastStore } from '@/stores/toast'; // *** 改动：引入 toast store ***
+import Card from '@/components/base/Card.vue';
+import Input from '@/components/base/Input.vue';
+import Button from '@/components/base/Button.vue';
 
-// 导入基础组件
-import Card from '@/components/base/Card.vue'
-import Input from '@/components/base/Input.vue'
-import Button from '@/components/base/Button.vue'
+const router = useRouter();
+const userStore = useUserStore();
+const toastStore = useToastStore(); // *** 改动：获取 toast store 实例 ***
 
-const router = useRouter()
-const userStore = useUserStore()
-
-// 表单数据绑定 (将 account 改为 email)
 const loginForm = reactive({
   email: '',
   password: ''
-})
+});
 
-// 登录处理逻辑
 const handleLogin = async () => {
   if (!loginForm.email || !loginForm.password) {
-    alert('请输入邮箱和密码。')
-    return
+    toastStore.show('请输入邮箱和密码。', 'error'); // *** 改动：替换 alert ***
+    return;
   }
   
   try {
-    // 调用 store 中的 login action
-    await userStore.login(loginForm.email, loginForm.password)
-    
-    // 登录成功
-    alert('登录成功！')
-    router.push('/profile') // 跳转到个人中心
-    
+    await userStore.login(loginForm.email, loginForm.password);
+    toastStore.show('登录成功！', 'success'); // *** 改动：替换 alert ***
+    router.push('/profile');
   } catch (error) {
-    // 登录失败，处理错误
-    console.error('登录失败:', error)
-    alert('登录失败：' + error.message)
+    console.error("登录失败:", error);
+    toastStore.show('登录失败：' + error.message, 'error'); // *** 改动：替换 alert ***
   }
-}
+};
 </script>
-
-<style scoped>
-@reference "@/style.css";
-.login-container { min-height: calc(100vh - 200px); }
-</style>
