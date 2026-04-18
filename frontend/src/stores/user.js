@@ -85,5 +85,44 @@ export const useUserStore = defineStore('user', () => {
         router.push('/login')
     }
 
-    return { token, uid, name, isLoggedIn, login, register, logout } // 将 register 导出
+    /**
+     * ✨ [新增] 获取用于预约挂号的个人档案信息
+     * 这个函数将直接使用 fetch，并自动携带 token
+     */
+    async function fetchAppointmentProfile() {
+        // 如果未登录，则直接抛出错误，避免无效请求
+        if (!token.value) {
+            throw new Error('用户未登录，无法获取档案');
+        }
+        const response = await fetch('http://localhost:8080/api/patient/appointment-profile', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // 自动在请求头中附带认证 Token
+                'Authorization': `Bearer ${token.value}`
+            }
+        });
+        // 处理网络层错误
+        if (!response.ok) {
+            throw new Error(`网络请求失败，状态码：${response.status}`);
+        }
+        const result = await response.json();
+        // 处理业务层错误
+        if (result.code !== 200) {
+            throw new Error(result.message || '获取档案失败');
+        }
+        // 成功，返回 data 部分
+        return result.data;
+    }
+
+
+    return { 
+        token, 
+        uid, 
+        name, 
+        isLoggedIn, 
+        login, 
+        logout, // 别忘了 login 和 logout
+        fetchAppointmentProfile // 将新函数导出
+    }
 })
