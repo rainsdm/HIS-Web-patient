@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// 1. 引入我们创建的 user store，用于获取登录状态
+// 获取登录状态
 import { useUserStore } from '@/stores/user'
+import { isTokenExpired } from '@/utils/api' 
 
 const routes = [
   {
@@ -30,14 +31,12 @@ const routes = [
         path: 'appointment',
         name: 'Appointment',
         component: () => import('@/views/Appointment.vue'),
-        // 2. 在这里给“预约挂号”页面加上“需要认证”的标记
         meta: { title: '门诊挂号', requiresAuth: true }
       },
       {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/Profile.vue'),
-        // 3. 在这里给“个人中心”页面加上“需要认证”的标记
         meta: { title: '电子档案', requiresAuth: true }
       }
     ]
@@ -49,10 +48,20 @@ const router = createRouter({
   routes
 })
 
-// 4. 核心的全局路由守卫
+// 核心的全局路由守卫
 router.beforeEach((to, from, next) => {
   // 必须在守卫函数内部获取 store 实例，以确保 Pinia 已被挂载
   const userStore = useUserStore()
+
+  // 增加对Token过期的主动检查
+  if (isTokenExpired(userStore.token)) {
+    // 如果 token 已过期
+    if (userStore.isLoggedIn) {
+      // 并且 Pinia 的状态还是“登录”，说明是刚过期，需要强制登出
+      console.log('检测到 Token 已过期，执行静默登出。');
+      userStore.logout(true);
+    }
+  }
 
   // 检查目标路由(to)是否标记了 requiresAuth
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {

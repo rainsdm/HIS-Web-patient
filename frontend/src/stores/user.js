@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+// 1. 引入新建的 request 函数
+import { request } from '@/utils/api' 
 
 export const useUserStore = defineStore('user', () => {
-    // --- State ---
+    // --- State, Getters (保持不变) ---
     const token = ref(localStorage.getItem('token') || null)
     const uid = ref(localStorage.getItem('uid') || null)
     const name = ref(localStorage.getItem('name') || null)
@@ -23,7 +25,6 @@ export const useUserStore = defineStore('user', () => {
         token.value = userData.token
         uid.value = userData.uid
         name.value = userData.patientName
-
         // 持久化到 localStorage
         localStorage.setItem('token', userData.token)
         localStorage.setItem('uid', userData.uid)
@@ -34,16 +35,12 @@ export const useUserStore = defineStore('user', () => {
      * 登录
      */
     async function login(email, password) {
-        const response = await fetch('http://localhost:8080/auth/patient/login', {
+        // 2. 使用 request 函数代替 fetch
+        const resultData = await request('/auth/patient/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
-        })
-        const result = await response.json()
-        if (result.code !== 200) {
-            throw new Error(result.message || '登录失败')
-        }
-        setLoginState(result.data) // 使用辅助函数
+        });
+        setLoginState(resultData);
     }
     
     /**
@@ -51,78 +48,42 @@ export const useUserStore = defineStore('user', () => {
      * @param {object} form - 包含注册信息的表单对象
      */
     async function register(form) {
-        const response = await fetch('http://localhost:8080/auth/patient/register', {
+        // 3. 使用 request 函数代替 fetch
+        const resultData = await request('/auth/patient/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(form)
         });
+        setLoginState(resultData);
+    }
 
-        if (!response.ok) {
-            throw new Error(`网络通讯失败，状态码：${response.status}`);
-        }
+    /**
+     * 4. ✨ 改造 logout 方法
+     * @param {boolean} silent - 如果为 true，则不显示确认框直接登出
+     */
+    function logout(silent = false) {
+        const performLogout = () => {
+            token.value = null
+            uid.value = null
+            name.value = null
+            localStorage.removeItem('token')
+            localStorage.removeItem('uid')
+            localStorage.removeItem('name')
+            router.push('/login')
+        };
         
-        const result = await response.json();
-
-        if (result.code !== 200) {
-            throw new Error(result.message || '注册失败');
-        }
-
-        // 注册成功后，调用 setLoginState 来同步更新状态，实现“注册即登录”
-        setLoginState(result.data); 
-    }
-
-
-    /**
-     * 登出
-     */
-    function logout() {
-        token.value = null
-        uid.value = null
-        name.value = null
-        localStorage.removeItem('token')
-        localStorage.removeItem('uid')
-        localStorage.removeItem('name')
-        router.push('/login')
-    }
-
-    /**
-     * ✨ [新增] 获取用于预约挂号的个人档案信息
-     * 这个函数将直接使用 fetch，并自动携带 token
-     */
-    async function fetchAppointmentProfile() {
-        // 如果未登录，则直接抛出错误，避免无效请求
-        if (!token.value) {
-            throw new Error('用户未登录，无法获取档案');
-        }
-        const response = await fetch('http://localhost:8080/api/patient/appointment-profile', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                // 自动在请求头中附带认证 Token
-                'Authorization': `Bearer ${token.value}`
+        if (silent) {
+            performLogout();
+        } else {
+            if (confirm('您确定要退出登录吗？')) {
+                performLogout();
             }
-        });
-        // 处理网络层错误
-        if (!response.ok) {
-            throw new Error(`网络请求失败，状态码：${response.status}`);
         }
-        const result = await response.json();
-        // 处理业务层错误
-        if (result.code !== 200) {
-            throw new Error(result.message || '获取档案失败');
-        }
-        // 成功，返回 data 部分
-        return result.data;
     }
 
-
-    return { 
-        token, 
-        uid, 
-        name, 
-        isLoggedIn, 
-        login, 
-        logout, // 别忘了 login 和 logout
-        fetchAppointmentProfile // 将新函数导出
+    async function fetchAppointmentProfile() {
+        // 5. 使用 request 函数代替 fetch
+        return await request('/api/patient/appointment-profile', { method: 'GET' });
     }
+
+    return { token, uid, name, isLoggedIn, login, register, logout, fetchAppointmentProfile }
 })
