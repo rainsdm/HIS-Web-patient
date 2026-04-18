@@ -7,6 +7,7 @@
       @input="$emit('update:modelValue', $event.target.value)"
       class="form-input w-full"
       :placeholder="placeholder"
+      :name="name"
     >
   </div>
 </template>
@@ -16,7 +17,8 @@ defineProps({
   label: String,
   modelValue: [String, Number],
   type: { type: String, default: 'text' },
-  placeholder: String
+  placeholder: String,
+  name: String
 })
 defineEmits(['update:modelValue'])
 </script>

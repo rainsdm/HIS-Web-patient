@@ -3,16 +3,19 @@
     <Card title="患者服务平台登录" class="w-[400px]">
       <div class="space-y-4">
         <Input 
-          v-model="loginForm.account" 
-          label="账号/手机号/就诊卡号" 
-          placeholder="请输入您的账号" 
+          v-model="loginForm.email" 
+          label="邮箱" 
+          placeholder="请输入您的邮箱"
+          type="email" 
+          name="email"
         />
         
         <Input 
           v-model="loginForm.password" 
           type="password" 
           label="登录密码" 
-          placeholder="请输入密码" 
+          placeholder="请输入密码"
+          name="password"
         />
         
         <Button class="w-full py-2.5 mt-2" @click="handleLogin">
@@ -45,34 +48,46 @@
 <script setup>
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user' // 引入 user store
 
-// 导入无前缀的基础组件
+// 导入基础组件
 import Card from '@/components/base/Card.vue'
 import Input from '@/components/base/Input.vue'
 import Button from '@/components/base/Button.vue'
 
 const router = useRouter()
+const userStore = useUserStore()
 
-// 表单数据绑定
+// 表单数据绑定 (将 account 改为 email)
 const loginForm = reactive({
-  account: '',
+  email: '',
   password: ''
 })
 
 // 登录处理逻辑
-const handleLogin = () => {
-  console.log('提交的登录信息：', loginForm)
-  // 此处预留后端 API 对接位置
-  // 模拟验证通过后跳转回首页
-  router.push('/main')
+const handleLogin = async () => {
+  if (!loginForm.email || !loginForm.password) {
+    alert('请输入邮箱和密码。')
+    return
+  }
+  
+  try {
+    // 调用 store 中的 login action
+    await userStore.login(loginForm.email, loginForm.password)
+    
+    // 登录成功
+    alert('登录成功！')
+    router.push('/profile') // 跳转到个人中心
+    
+  } catch (error) {
+    // 登录失败，处理错误
+    console.error('登录失败:', error)
+    alert('登录失败：' + error.message)
+  }
 }
 </script>
 
 <style scoped>
 @reference "@/style.css";
-
-/* 容器高度占满视口，确保卡片垂直居中 */
-.login-container {
-  min-height: calc(100vh - 200px);
-}
+.login-container { min-height: calc(100vh - 200px); }
 </style>
