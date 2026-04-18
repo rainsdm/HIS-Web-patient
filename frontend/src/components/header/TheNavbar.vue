@@ -21,10 +21,7 @@ import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 
 const handleLogout = () => {
-    // 使用 confirm 提供一个简单的确认对话框，给用户一个反悔的机会
-    if (confirm('您确定要退出登录吗？')) {
-        userStore.logout()
-    }
+    userStore.logout()
 }
 </script>
 

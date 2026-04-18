@@ -1,17 +1,19 @@
 // 文件路径: src/stores/user.js
+
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { request } from '@/utils/api' 
-import { useModalStore } from '@/stores/modal' // *** 改动：引入 modal store ***
+// *** 改动：不再需要引入 useModalStore ***
 
 export const useUserStore = defineStore('user', () => {
-    // ... state, getters, setLoginState, login, register (这些都保持不变) ...
+    // --- State, Getters, setLoginState, login, register (这些都保持不变) ---
     const token = ref(localStorage.getItem('token') || null)
     const uid = ref(localStorage.getItem('uid') || null)
     const name = ref(localStorage.getItem('name') || null)
     const router = useRouter()
     const isLoggedIn = computed(() => !!token.value)
+
     function setLoginState(userData) {
         token.value = userData.token
         uid.value = userData.uid
@@ -20,6 +22,7 @@ export const useUserStore = defineStore('user', () => {
         localStorage.setItem('uid', userData.uid)
         localStorage.setItem('name', userData.patientName)
     }
+
     async function login(email, password) {
         const resultData = await request('/auth/patient/login', {
             method: 'POST',
@@ -27,6 +30,7 @@ export const useUserStore = defineStore('user', () => {
         });
         setLoginState(resultData);
     }
+    
     async function register(form) {
         const resultData = await request('/auth/patient/register', {
             method: 'POST',
@@ -36,34 +40,19 @@ export const useUserStore = defineStore('user', () => {
     }
 
     /**
-     * 4. ✨ 改造 logout 方法
-     * @param {boolean} silent - 如果为 true，则不显示确认框直接登出
+     * ✨ [最终版] 登出函数
+     * 移除了所有弹窗逻辑，变为一个即时、无阻碍的操作。
+     * “silent”参数不再需要，但保留它不会导致任何问题，函数行为保持一致。
      */
-    async function logout(silent = false) { // *** 改动：将函数改为 async ***
-        const performLogout = () => {
-            token.value = null
-            uid.value = null
-            name.value = null
-            localStorage.removeItem('token')
-            localStorage.removeItem('uid')
-            localStorage.removeItem('name')
-            router.push('/login')
-        };
-        
-        if (silent) {
-            performLogout();
-        } else {
-            // *** 改动：使用新的 Modal 系统代替 confirm ***
-            const modalStore = useModalStore();
-            const confirmed = await modalStore.show({
-                title: '退出登录',
-                message: '您确定要退出当前账号吗？'
-            });
-
-            if (confirmed) {
-                performLogout();
-            }
-        }
+    function logout(silent = false) {
+        // 直接执行登出操作
+        token.value = null;
+        uid.value = null;
+        name.value = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('uid');
+        localStorage.removeItem('name');
+        router.push('/login'); // 重定向到登录页
     }
 
     async function fetchAppointmentProfile() {
