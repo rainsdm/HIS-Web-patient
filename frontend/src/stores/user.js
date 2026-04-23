@@ -56,7 +56,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     async function fetchAppointmentProfile() {
-        return await request('/api/patient/appointment-profile', { method: 'GET' });
+        return await request('/patient/appointment-profile', { method: 'GET' });
     }
 
     return { token, uid, name, isLoggedIn, login, register, logout, fetchAppointmentProfile }

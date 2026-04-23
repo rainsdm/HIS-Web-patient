@@ -20,7 +20,6 @@
           <div v-else-if="profile" class="text-[14px]">
             就诊人：<strong class="text-(--text-main)">{{ profile.name }}</strong> 
             <span class="ml-4 text-(--text-sub)">证件号：{{ profile.maskedIdentityCard }}</span>
-            <div class="text-(--success) mt-1">{{ profile.insuranceInfo }}</div>
           </div>
         </Card>
 
