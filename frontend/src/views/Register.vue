@@ -3,10 +3,36 @@
   <div class="register-wrapper flex justify-center items-center py-10">
     <Card title="建立就诊档案" class="w-full max-w-lg">
       <form @submit.prevent="handleSubmit" class="space-y-4">
-        <Input label="姓名" placeholder="请输入真实姓名" v-model="form.name" />
-        <Input label="身份证号" placeholder="请输入18位身份证号" v-model="form.identityCard" />
-        <Input label="邮箱" type="email" placeholder="用于登录和接收通知" v-model="form.email" />
-        <Input label="设置密码" type="password" placeholder="请设置登录密码" v-model="form.password" />
+        <Input 
+          label="姓名" 
+          placeholder="请输入真实姓名" 
+          v-model="form.name"
+          :errorMessage="formErrors.name"
+          @input="clearError('name')"
+        />
+        <Input 
+          label="身份证号" 
+          placeholder="请输入18位身份证号" 
+          v-model="form.identityCard"
+          :errorMessage="formErrors.identityCard"
+          @input="clearError('identityCard')"
+        />
+        <Input 
+          label="邮箱" 
+          type="email" 
+          placeholder="用于登录和接收通知" 
+          v-model="form.email"
+          :errorMessage="formErrors.email"
+          @input="clearError('email')"
+        />
+        <Input 
+          label="设置密码" 
+          type="password" 
+          placeholder="请设置登录密码" 
+          v-model="form.password"
+          :errorMessage="formErrors.password"
+          @input="clearError('password')"
+        />
 
         <div v-if="form.password.length > 0" class="password-strength-container">
           <div class="strength-bar-bg">
@@ -52,6 +78,19 @@ const form = reactive({
   email: '',
   password: ''
 });
+
+const formErrors = reactive({
+  name: '',
+  identityCard: '',
+  email: '',
+  password: ''
+});
+
+const clearError = (fieldName) => {
+  if (formErrors[fieldName]) {
+    formErrors[fieldName] = '';
+  }
+};
 
 const passwordRules = [
   { key: 'length', text: '长度为 8-16 个字符' },
@@ -167,8 +206,10 @@ const validateIdentityCard = (id) => {
 };
 
 const handleSubmit = async () => {
-  // --- 在提交前执行所有前端校验 ---
+  // 每次提交前，先清空上一次的后端错误
+  Object.keys(formErrors).forEach(key => formErrors[key] = '');
   
+  // 步骤1：优先级最高的前端即时校验，快速拦截明显错误，提升体验
   if (!validateName(form.name)) {
     toastStore.show('姓名长度需为 2 至 50 个字符。', 'error');
     return;
@@ -186,14 +227,30 @@ const handleSubmit = async () => {
     return;
   }
 
-  // --- 所有校验通过后，再执行原有的提交动作 ---
+  // 步骤2：向后端发起请求，进行权威校验和处理
   try {
     await userStore.register(form);
     toastStore.show('档案建立成功，您已自动登录！', 'success');
     router.push('/appointment');
   } catch (error) {
     console.error('建档失败:', error);
-    toastStore.show('未能完成建档: ' + error.message, 'error');
+
+    // 步骤3：智能解析后端错误响应
+    // 假设api请求失败时，错误对象中会包含响应数据
+    const backendFieldErrors = error.response?.data?.errors;
+
+    if (backendFieldErrors && Array.isArray(backendFieldErrors)) {
+      // 3.1 如果是后端返回的结构化字段错误，则分发到各输入框
+      backendFieldErrors.forEach(err => {
+        if (formErrors.hasOwnProperty(err.field)) {
+          formErrors[err.field] = err.defaultMessage;
+        }
+      });
+      toastStore.show('信息有误，请根据页面提示进行修改。', 'error');
+    } else {
+      // 3.2 如果是网络问题或非字段验证的通用错误，显示全局Toast提示
+      toastStore.show('未能完成建档: ' + (error.message || '服务异常，请稍后再试'), 'error');
+    }
   }
 };
 </script>
