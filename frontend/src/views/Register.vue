@@ -118,12 +118,75 @@ const passwordStrength = computed(() => {
   };
 });
 
+// --- 前端校验 ---
+
+/**
+ * 校验姓名。根据测试用例 REG-BVA-NM-001 和 REG-BVA-NM-002，
+ * 姓名长度至少为2。为提供更好的用户体验，设定一个50字符的上限。
+ */
+const validateName = (name) => {
+  return name.length >= 2 && name.length <= 50;
+};
+
+/**
+ * 校验邮箱。根据测试用例 REG-REQ-EM-001 和 REG-REQ-EM-003，
+ * 使用正则表达式确保邮箱格式基本正确，例如包含@且无空格。
+ */
+const validateEmail = (email) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
+
+/**
+ * 校验18位中国大陆身份证号。
+ * 覆盖测试用例 REG-REQ-ID-001, 002, 003，包含长度، 格式及国家标准校验码检查。
+ */
+const validateIdentityCard = (id) => {
+  if (!id) return false;
+  const idUpper = id.toUpperCase();
+  
+  // 1. 正则表达式检查基本格式和长度
+  const regex = /^\d{17}(\d|X)$/;
+  if (!regex.test(idUpper)) {
+    return false;
+  }
+
+  // 2. 校验码检查
+  const weights = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+  const checksumMap = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
+  
+  let sum = 0;
+  for (let i = 0; i < 17; i++) {
+    sum += parseInt(idUpper[i]) * weights[i];
+  }
+  
+  const remainder = sum % 11;
+  const expectedChecksum = checksumMap[remainder];
+  
+  return idUpper[17] === expectedChecksum;
+};
+
 const handleSubmit = async () => {
+  // --- 在提交前执行所有前端校验 ---
+  
+  if (!validateName(form.name)) {
+    toastStore.show('姓名长度需为 2 至 50 个字符。', 'error');
+    return;
+  }
+  if (!validateIdentityCard(form.identityCard)) {
+    toastStore.show('请输入有效的18位身份证号码。', 'error');
+    return;
+  }
+  if (!validateEmail(form.email)) {
+    toastStore.show('请输入格式正确的邮箱地址。', 'error');
+    return;
+  }
   if (passwordStrength.value.score < passwordRules.length) {
     toastStore.show('密码不符合所有要求，请检查。', 'error');
     return;
   }
 
+  // --- 所有校验通过后，再执行原有的提交动作 ---
   try {
     await userStore.register(form);
     toastStore.show('档案建立成功，您已自动登录！', 'success');
