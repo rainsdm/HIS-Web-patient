@@ -15,8 +15,7 @@ export default defineConfig({
     }
   },
   server: {
-    // 假设你的无线网卡 IP 是 192.168.31.100
-    host: true, // 监听所有地址
+    host: true,
     port: 5173
   }
 })

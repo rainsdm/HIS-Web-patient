@@ -10,6 +10,8 @@ export const useUserStore = defineStore('user', () => {
     const router = useRouter()
     const isLoggedIn = computed(() => !!token.value)
 
+    const appointmentProfile = ref(null)
+
     function setLoginState(userData) {
         token.value = userData.token
         uid.value = userData.uid
@@ -22,7 +24,7 @@ export const useUserStore = defineStore('user', () => {
     async function login(credentials) {
         const resultData = await request('/auth/patient/login', {
             method: 'POST',
-            body: JSON.stringify(credentials) // 直接将接收到的对象序列化
+            body: JSON.stringify(credentials)
         });
         setLoginState(resultData);
     }
@@ -42,12 +44,34 @@ export const useUserStore = defineStore('user', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('uid');
         localStorage.removeItem('name');
-        router.push('/login');
+
+        appointmentProfile.value = null;
+
+        if (!silent) {
+            router.push('/login');
+        }
+    }
+    
+    async function loadAppointmentProfile() {
+        if (appointmentProfile.value) {
+            console.log('档案信息已存在，从 Pinia 缓存加载。');
+            return;
+        }
+
+        console.log('首次加载，正在从后端获取档案信息...');
+        const profileData = await request('/patient/appointment-profile', { method: 'GET' });
+        appointmentProfile.value = profileData;
     }
 
-    async function fetchAppointmentProfile() {
-        return await request('/patient/appointment-profile', { method: 'GET' });
+    return { 
+        token, 
+        uid, 
+        name, 
+        isLoggedIn, 
+        appointmentProfile,
+        login, 
+        register, 
+        logout, 
+        loadAppointmentProfile 
     }
-
-    return { token, uid, name, isLoggedIn, login, register, logout, fetchAppointmentProfile }
 })

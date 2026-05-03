@@ -2,7 +2,7 @@
 
 import { useUserStore } from '@/stores/user';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 /**
  * 封装一个全局的请求函数，内置 token 处理和 401 自动登出
@@ -27,12 +27,10 @@ export async function request(url, options = {}) {
         headers,
     });
 
-    // ✨ 核心：检查 401 Unauthorized 错误
     if (response.status === 401) {
         console.warn('捕获到 401 未授权错误，执行自动登出');
-        // 调用 store 的 logout 方法，并传入 true 表示静默登出（不弹确认框）
+        // 静默退出
         userStore.logout(true); 
-        // 抛出错误，中断当前的操作链
         throw new Error('身份认证已过期，请重新登录');
     }
 
@@ -46,7 +44,7 @@ export async function request(url, options = {}) {
         throw new Error(result.message || 'API 请求业务失败');
     }
 
-    return result.data; // 直接返回 data 部分
+    return result.data;
 }
 
 /**
@@ -62,19 +60,16 @@ export function isTokenExpired(token) {
         const payloadBase64 = token.split('.')[1];
         if (!payloadBase64) return true;
         
-        //解码
         const decodedJson = atob(payloadBase64);
         const decoded = JSON.parse(decodedJson);
 
-        // 'exp' 是 JWT 的标准字段，代表过期时间（Unix 时间戳，单位秒）
         const exp = decoded.exp;
         
-        // 获取当前时间（Unix 时间戳，单位秒）
         const now = Math.floor(Date.now() / 1000);
 
         return now >= exp;
     } catch (error) {
         console.error("Token 解码失败:", error);
-        return true; // 解码失败也视为无效
+        return true;
     }
 }
